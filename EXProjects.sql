@@ -88,3 +88,36 @@ WHERE username = 'Rh_maria' AND password = '123mudar'
 
 DELETE users_has_projects
 WHERE users_id = 2
+
+SELECT id, name, email, username,
+       CASE WHEN password <> '123mudar'
+	   THEN	'********'
+	   ELSE
+	       password
+	   END AS password
+FROM users
+
+SELECT namee AS nome_projeto, description AS descricao, date AS data
+FROM projects
+WHERE id IN (
+	SELECT projects_id FROM users_has_projects WHERE
+	users_id IN (
+		SELECT id 
+		FROM users 
+		WHERE email = 'aparecido@empresa.com'
+	)
+)
+
+SELECT name AS Nome, email as Email
+FROM users
+WHERE id IN (
+     SELECT users_id FROM users_has_projects WHERE
+	 projects_id IN (
+	    SELECT id
+		FROM projects 
+		WHERE namee = 'auditoria'
+	)
+)
+
+SELECT namee, description, date, DATEDIFF(DAY,date,'2014-09-16') * 79.85 AS valor FROM projects
+WHERE namee LIKE '%Manutenção%'

@@ -170,3 +170,34 @@ WHERE nome = 'Michael Keaton'
 SELECT num_cadastro, nome, logradouro + ', ' + CAST(num AS VARCHAR(5)) + ' - CEP: ' + cep AS endereco_completo
 FROM cliente
 WHERE num_cadastro >= 5503
+
+SELECT id, ano, titulo =
+       CASE WHEN LEN(titulo) > 10
+	   THEN
+	   SUBSTRING(titulo,1,10) + '...'
+	   ELSE
+	   titulo
+	   END
+FROM filme
+WHERE id IN (
+       SELECT filmeid from dvd WHERE data_fabricacao > CONVERT(DATE, '2020-01-01')
+)
+
+SELECT num, data_fabricacao, DATEDIFF(MONTH, data_fabricacao, GETDATE()) AS meses_desde_fabricacao
+FROM dvd
+WHERE filmeid IN (
+SELECT id FROM filme WHERE titulo = 'Interestelar'
+)
+
+SELECT dvdnum, data_locacao, data_devolucao, DATEDIFF(DAY, data_locacao, data_devolucao) AS dias_alugados, valor
+FROM locacao
+WHERE clientenum_cadastro IN (
+SELECT num_cadastro FROM cliente WHERE nome LIKE '%Rosa%'
+)
+
+SELECT nome, logradouro + ' , ' + CAST(num AS VARCHAR(5)) + ' , ' + 
+SUBSTRING(cep, 1, 5) + '-' + SUBSTRING(cep, 6, 3) AS Endereco_completo
+FROM cliente
+WHERE num_cadastro IN (
+SELECT clientenum_cadastro FROM locacao WHERE dvdnum = '10002'
+)
