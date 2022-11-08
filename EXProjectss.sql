@@ -65,7 +65,7 @@ INSERT INTO users VALUES
 INSERT INTO projects VALUES
 ('Re-folha', 'Refatoração das Folhas', '05-09-2014'),
 ('Manutenção PC ́s', 'Manutenção PC ́s', '06-09-2014'),
-('Auditoria ', NULL, '07-09-2014')
+('Auditoria ', NULL, '07-09-2014'),
 
 INSERT INTO users_has_projects VALUES
 ('1', '10001'),
@@ -121,3 +121,26 @@ WHERE id IN (
 
 SELECT namee, description, date, DATEDIFF(DAY,date,'2014-09-16') * 79.85 AS valor FROM projects
 WHERE namee LIKE '%Manutenção%'
+
+INSERT INTO users (name, username, email) VALUES
+('Joao', 'Ti_joao', 'joao@empresa.com')
+
+INSERT INTO projects (namee, description, date) VALUES
+('Atualização de Sistemas', 'Modificação de Sistemas Operacionais nos PCs', '12-09-2014')
+
+SELECT u.id AS id_users, u.name AS name_users, u.email AS email_users, p.id AS id_project, 
+p.namee AS nome_project, p.description AS descricao, CONVERT(CHAR(08),p.date,103) AS data
+FROM users u INNER JOIN users_has_projects uhp 
+ON u.id = uhp.users_id INNER JOIN projects p 
+ON p.id = uhp.projects_id
+WHERE p.namee = 'RE-FOLHA'
+
+SELECT p.namee AS nome_project 
+FROM projects p LEFT OUTER JOIN users_has_projects uhp
+ON p.id = uhp.users_id 
+WHERE uhp.users_id IS NULL
+
+SELECT u.name AS nome_users 
+FROM users u LEFT OUTER JOIN users_has_projects uhp
+ON u.id = uhp.users_id 
+WHERE uhp.users_id IS NULL

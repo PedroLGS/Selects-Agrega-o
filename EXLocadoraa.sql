@@ -201,3 +201,25 @@ FROM cliente
 WHERE num_cadastro IN (
 SELECT clientenum_cadastro FROM locacao WHERE dvdnum = '10002'
 )
+
+SELECT cl.num_cadastro AS cadastro_cliente, cl.nome AS nome_cliente, CONVERT(CHAR(08),lo.data_locacao,103) AS data_locacao, 
+DATEDIFF(DAY,lo.data_locacao,lo.data_devolucao) AS dias_alugado, fi.titulo AS titulo_filme, fi.ano AS ano_filme
+FROM  cliente cl INNER JOIN locacao lo ON cl.num_cadastro = lo.clientenum_cadastro
+INNER JOIN dvd ON dvd.num = lo.dvdnum
+INNER JOIN filme fi ON fi.id = dvd.filmeid
+WHERE cl.nome LIKE 'MATILDE%'
+
+SELECT es.nome AS nome_estrela , es.nome_real AS nome_real_estrela, fi.titulo AS titulo_filme
+FROM estrela es INNER JOIN filme_estrela fies ON es.id = fies.estrelaid
+INNER JOIN filme fi ON fi.id = fies.filmeid
+WHERE fi.ano = '2015'
+
+SELECT fi.titulo AS titulo_filme, CONVERT(CHAR(08),dvd.data_fabricacao,103) AS data_fabricacao, 
+CASE 
+WHEN (CONVERT(INT,DATEPART(YEAR,GETDATE())) - fi.ano) > 6
+	THEN 
+	CAST((CONVERT(INT,DATEPART(YEAR,GETDATE())) - fi.ano)AS VARCHAR(20)) + ' anos'
+ELSE
+	CAST((CONVERT(INT,DATEPART(YEAR,GETDATE())) - fi.ano)AS VARCHAR(20))
+END AS diferenca_anos
+FROM filme fi INNER JOIN DVD ON fi.id = dvd.filmeid
