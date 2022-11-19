@@ -144,3 +144,15 @@ SELECT u.name AS nome_users
 FROM users u LEFT OUTER JOIN users_has_projects uhp
 ON u.id = uhp.users_id 
 WHERE uhp.users_id IS NULL
+
+SELECT COUNT(p.id) AS qty_projects_no_users
+FROM projects p LEFT OUTER JOIN users_has_projects uhp 
+ON uhp.projects_id = p.id
+WHERE uhp.users_id IS NULL
+
+SELECT p.id AS id_project, p.namee AS name_project, COUNT(uhp.users_id) AS qty_users_project
+FROM projects p LEFT OUTER JOIN users_has_projects uhp
+ON uhp.projects_id = p.id
+GROUP BY p.id, p.namee
+ORDER BY p.namee ASC
+

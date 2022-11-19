@@ -223,3 +223,48 @@ ELSE
 	CAST((CONVERT(INT,DATEPART(YEAR,GETDATE())) - fi.ano)AS VARCHAR(20))
 END AS diferenca_anos
 FROM filme fi INNER JOIN DVD ON fi.id = dvd.filmeid
+
+
+SELECT cl.num_cadastro, cl.nome, fi.titulo, CONVERT(CHAR(08), dvd.data_fabricacao,103) AS data_fabricacao,
+lo.valor AS valor_locacao
+FROM cliente cl, filme fi, dvd, locacao lo
+WHERE lo.clientenum_cadastro = cl.num_cadastro
+AND dvd.data_fabricacao IN (
+		SELECT MAX(dvd.data_fabricacao)
+		FROM dvd, locacao lo
+		WHERE dvd.num = lo.dvdnum
+)
+
+SELECT cl.num_cadastro, cl.nome, CONVERT(CHAR(10),lo.data_locacao,103) 
+AS data_locacao, COUNT(lo.data_locacao) AS qtd
+FROM cliente cl
+INNER JOIN locacao lo 
+ON lo.clientenum_cadastro = cl.num_cadastro
+INNER JOIN dvd 
+ON dvd.num = lo.dvdnum
+INNER JOIN filme fi 
+ON fi.id = dvd.filmeid
+GROUP BY cl.num_cadastro, cl.nome, lo.data_locacao
+
+SELECT cl.num_cadastro, cl.nome, CONVERT(CHAR(10),lo.data_locacao,103) AS data_locacao,
+SUM(lo.valor) AS valor_total
+FROM cliente cl
+INNER JOIN locacao lo 
+ON lo.clientenum_cadastro = cl.num_cadastro
+INNER JOIN dvd 
+ON dvd.num = lo.dvdnum
+INNER JOIN filme fi 
+ON fi.id = dvd.filmeid
+GROUP BY cl.num_cadastro, cl.nome, lo.data_locacao
+
+SELECT cl.num_cadastro, cl.nome, cl.logradouro + ', ' +  CAST(cl.num AS VARCHAR(5)) 
+AS Endereco, CONVERT(CHAR(10),lo.data_locacao,103) AS filmes_alugados_simultaneamente
+FROM cliente cl
+INNER JOIN locacao lo
+ON lo.clientenum_cadastro = cl.num_cadastro
+INNER JOIN dvd
+ON dvd.num = lo.dvdnum
+INNER JOIN filme fi
+ON fi.id = dvd.filmeid
+GROUP BY cl.num_cadastro, cl.nome, cl.logradouro, cl.num, lo.data_locacao
+HAVING COUNT(dvd.num) > 2
